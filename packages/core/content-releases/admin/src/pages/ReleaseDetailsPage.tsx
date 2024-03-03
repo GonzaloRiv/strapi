@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { unstable_useDocument } from '@strapi/admin/strapi-admin';
+import { Page, unstable_useDocument } from '@strapi/admin/strapi-admin';
 import {
   Button,
   ContentLayout,
@@ -22,7 +22,6 @@ import {
 import { LinkButton, Menu } from '@strapi/design-system/v2';
 import {
   CheckPermissions,
-  LoadingIndicatorPage,
   PageSizeURLQuery,
   PaginationURLQuery,
   RelativeTime,
@@ -32,7 +31,6 @@ import {
   useQueryParams,
   ConfirmDialog,
   useRBAC,
-  AnErrorOccurred,
   useTracking,
 } from '@strapi/helper-plugin';
 import {
@@ -296,11 +294,7 @@ const ReleaseDetailsLayout = ({
   };
 
   if (isLoadingDetails) {
-    return (
-      <Main aria-busy={isLoadingDetails}>
-        <LoadingIndicatorPage />
-      </Main>
-    );
+    return <Page.Loading />;
   }
 
   if (isError || !release) {
@@ -589,11 +583,7 @@ const ReleaseDetailsBody = ({ releaseId }: ReleaseDetailsBodyProps) => {
   };
 
   if (isLoading || isReleaseLoading) {
-    return (
-      <ContentLayout>
-        <LoadingIndicatorPage />
-      </ContentLayout>
-    );
+    return <Page.Loading />;
   }
 
   const releaseActions = data?.data;
@@ -624,11 +614,7 @@ const ReleaseDetailsBody = ({ releaseId }: ReleaseDetailsBodyProps) => {
   }
 
   if (isError || !releaseActions) {
-    return (
-      <ContentLayout>
-        <AnErrorOccurred />
-      </ContentLayout>
-    );
+    return <Page.Error />;
   }
 
   if (Object.keys(releaseActions).length === 0) {
@@ -878,9 +864,7 @@ const ReleaseDetailsPage = () => {
         toggleEditReleaseModal={toggleEditReleaseModal}
         toggleWarningSubmit={toggleWarningSubmit}
       >
-        <ContentLayout>
-          <LoadingIndicatorPage />
-        </ContentLayout>
+        <Page.Loading />
       </ReleaseDetailsLayout>
     );
   }

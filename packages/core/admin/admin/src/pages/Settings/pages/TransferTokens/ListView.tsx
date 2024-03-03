@@ -8,8 +8,6 @@ import {
   Main,
 } from '@strapi/design-system';
 import {
-  CheckPagePermissions,
-  NoPermissions,
   useAPIErrorHandler,
   useFocusWhenNavigate,
   useNotification,
@@ -23,6 +21,7 @@ import { Helmet } from 'react-helmet';
 import { useIntl } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
 
+import { Page } from '../../../../components/PageHelpers';
 import { useTypedSelector } from '../../../../core/store/hooks';
 import { useOnce } from '../../../../hooks/useOnce';
 import {
@@ -205,8 +204,7 @@ const ListView = () => {
         }
       />
       <ContentLayout>
-        {!canRead && <NoPermissions />}
-        {canRead && transferTokens.length > 0 && (
+        {transferTokens.length > 0 && (
           <Table
             permissions={{ canRead, canDelete, canUpdate }}
             headers={headers}
@@ -217,7 +215,7 @@ const ListView = () => {
             tokenType={TRANSFER_TOKEN_TYPE}
           />
         )}
-        {canRead && canCreate && transferTokens.length === 0 ? (
+        {canCreate && transferTokens.length === 0 ? (
           <EmptyStateLayout
             action={
               <LinkButton
@@ -238,7 +236,7 @@ const ListView = () => {
             })}
           />
         ) : null}
-        {canRead && !canCreate && transferTokens.length === 0 ? (
+        {!canCreate && transferTokens.length === 0 ? (
           <EmptyStateLayout
             icon={<EmptyDocuments width="10rem" />}
             content={formatMessage({
@@ -262,9 +260,9 @@ const ProtectedListView = () => {
   );
 
   return (
-    <CheckPagePermissions permissions={permissions}>
+    <Page.Protect permissions={permissions}>
       <ListView />
-    </CheckPagePermissions>
+    </Page.Protect>
   );
 };
 

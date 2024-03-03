@@ -8,8 +8,6 @@ import {
   Main,
 } from '@strapi/design-system';
 import {
-  CheckPagePermissions,
-  NoPermissions,
   useAPIErrorHandler,
   useFocusWhenNavigate,
   useGuidedTour,
@@ -24,6 +22,7 @@ import { Helmet } from 'react-helmet';
 import { useIntl } from 'react-intl';
 import { useNavigate } from 'react-router-dom';
 
+import { Page } from '../../../../components/PageHelpers';
 import { useTypedSelector } from '../../../../core/store/hooks';
 import { useOnce } from '../../../../hooks/useOnce';
 import { useDeleteAPITokenMutation, useGetAPITokensQuery } from '../../../../services/apiTokens';
@@ -85,7 +84,7 @@ export const ListView = () => {
     (state) => state.admin_app.permissions.settings?.['api-tokens']
   );
   const {
-    allowedActions: { canCreate, canDelete, canUpdate, canRead },
+    allowedActions: { canCreate, canDelete, canUpdate },
   } = useRBAC(permissions);
   const navigate = useNavigate();
   const { trackUsage } = useTracking();
@@ -114,13 +113,7 @@ export const ListView = () => {
     });
   });
 
-  const {
-    data: apiTokens = [],
-    isLoading,
-    error,
-  } = useGetAPITokensQuery(undefined, {
-    skip: !canRead,
-  });
+  const { data: apiTokens = [], isLoading, error } = useGetAPITokensQuery();
 
   React.useEffect(() => {
     if (error) {
@@ -198,10 +191,9 @@ export const ListView = () => {
         }
       />
       <ContentLayout>
-        {!canRead && <NoPermissions />}
-        {canRead && apiTokens.length > 0 && (
+        {apiTokens.length > 0 && (
           <Table
-            permissions={{ canRead, canDelete, canUpdate }}
+            permissions={{ canRead: true, canDelete, canUpdate }}
             headers={headers}
             contentType="api-tokens"
             isLoading={isLoading}
@@ -210,7 +202,7 @@ export const ListView = () => {
             tokenType={API_TOKEN_TYPE}
           />
         )}
-        {canRead && canCreate && apiTokens.length === 0 ? (
+        {canCreate && apiTokens.length === 0 ? (
           <EmptyStateLayout
             icon={<EmptyDocuments width="10rem" />}
             content={formatMessage({
@@ -227,7 +219,7 @@ export const ListView = () => {
             }
           />
         ) : null}
-        {canRead && !canCreate && apiTokens.length === 0 ? (
+        {!canCreate && apiTokens.length === 0 ? (
           <EmptyStateLayout
             icon={<EmptyDocuments width="10rem" />}
             content={formatMessage({
@@ -247,8 +239,8 @@ export const ProtectedListView = () => {
   );
 
   return (
-    <CheckPagePermissions permissions={permissions}>
+    <Page.Protect permissions={permissions}>
       <ListView />
-    </CheckPagePermissions>
+    </Page.Protect>
   );
 };

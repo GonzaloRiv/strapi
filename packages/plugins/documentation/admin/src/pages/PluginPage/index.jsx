@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 
 import {
-  Box,
   LinkButton,
   ContentLayout,
   Flex,
@@ -18,7 +17,6 @@ import {
   Typography,
 } from '@strapi/design-system';
 import {
-  AnErrorOccurred,
   ConfirmDialog,
   EmptyStateLayout,
   LoadingIndicatorPage,
@@ -26,6 +24,7 @@ import {
   useRBAC,
 } from '@strapi/helper-plugin';
 import { Eye as Show, Refresh as Reload, Trash } from '@strapi/icons';
+import { Page } from '@strapi/strapi/admin';
 import { Helmet } from 'react-helmet';
 import { useIntl } from 'react-intl';
 import styled from 'styled-components';
@@ -72,15 +71,7 @@ const PluginPage = () => {
   });
 
   if (isError) {
-    return (
-      <Layout>
-        <ContentLayout>
-          <Box paddingTop={8}>
-            <AnErrorOccurred />
-          </Box>
-        </ContentLayout>
-      </Layout>
-    );
+    return <Page.Error />;
   }
 
   return (
